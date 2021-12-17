@@ -9,15 +9,15 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.StrictMath.abs;
 
-import com.whereismypiece.puzzle.models.PuzzlePiece;
+import com.whereismypiece.puzzle.models.PieceModel;
 import com.whereismypiece.puzzle.activities.PlayActivity;
 
-public class TouchListener implements View.OnTouchListener {
+public class PieceTouchListener implements View.OnTouchListener {
     private float xDelta;
     private float yDelta;
     private PlayActivity activity;
 
-    public TouchListener(PlayActivity activity) {
+    public PieceTouchListener(PlayActivity activity) {
         this.activity = activity;
     }
 
@@ -27,8 +27,8 @@ public class TouchListener implements View.OnTouchListener {
         float y = motionEvent.getRawY();
         final double tolerance = sqrt(pow(view.getWidth(), 2) + pow(view.getHeight(), 2)) / 10;
 
-        PuzzlePiece piece = (PuzzlePiece) view;
-        if (!piece.canMove) {
+        PieceModel piece = (PieceModel) view;
+        if (!piece.canMoveThis) {
             return true;
         }
 
@@ -45,13 +45,13 @@ public class TouchListener implements View.OnTouchListener {
                 view.setLayoutParams(lParams);
                 break;
             case MotionEvent.ACTION_UP:
-                int xDiff = abs(piece.xCoord - lParams.leftMargin);
-                int yDiff = abs(piece.yCoord - lParams.topMargin);
+                int xDiff = abs((int)piece.getX() - lParams.leftMargin);
+                int yDiff = abs((int)piece.getY() - lParams.topMargin);
                 if (xDiff <= tolerance && yDiff <= tolerance) {
-                    lParams.leftMargin = piece.xCoord;
-                    lParams.topMargin = piece.yCoord;
+                    lParams.leftMargin = (int) piece.getX();
+                    lParams.topMargin = (int) piece.getY();
                     piece.setLayoutParams(lParams);
-                    piece.canMove = false;
+                    piece.canMoveThis = false;
                     sendViewToBack(piece);
                     activity.checkGameOver();
                 }

@@ -4,30 +4,39 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.whereismypiece.puzzle.R;
+import com.whereismypiece.puzzle.utils.Global;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
     @Nullable
-    @BindView(R.id.sbRow)
-    SeekBar sbRow;
+    @BindView(R.id.sbRows)
+    SeekBar sbRows;
     @Nullable
     @BindView(R.id.sbColumns)
     SeekBar sbColumns;
     @Nullable
     @BindView(R.id.btnPurchase)
     Button btnPurchase;
+    @Nullable
+    @BindView(R.id.tvRowsValue)
+    TextView tvRowsValue;
+    @Nullable
+    @BindView(R.id.tvColumnsValue)
+    TextView tvColumnsValue;
 
-    private int currentRows;
-    private int currentColumns;
+    private static int currentRows;
+    private static int currentColumns;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +50,48 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        currentRows = Global.getRows(getApplicationContext());
+        currentColumns = Global.getColumns(getApplicationContext());
 
+        sbRows.setProgress(currentRows);
+        sbColumns.setProgress(currentColumns);
+
+        tvRowsValue.setText(currentRows+"");
+        tvColumnsValue.setText(currentColumns+"");
+
+
+        sbRows.setOnSeekBarChangeListener(this);
+        sbColumns.setOnSeekBarChangeListener(this);
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        switch (seekBar.getId()){
+            case R.id.sbRows:
+                currentRows = progress;
+                tvRowsValue.setText(currentRows+"");
+                break;
+            case R.id.sbColumns:
+                currentColumns = progress;
+                tvColumnsValue.setText(currentColumns+"");
+                break;
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        switch (seekBar.getId()){
+            case R.id.sbRows:
+                Global.saveRows(getApplicationContext(),seekBar.getProgress());
+                break;
+            case R.id.sbColumns:
+                Global.saveColumns(getApplicationContext(),seekBar.getProgress());
+                break;
+        }
     }
 }

@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.whereismypiece.puzzle.R;
+import com.whereismypiece.puzzle.utils.Global;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,11 +46,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @BindView(R.id.llSettings)
     LinearLayout llSettings;
 
-    String mCurrentPhotoPath;
-    private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 2;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 3;
-    static final int REQUEST_IMAGE_GALLERY = 4;
+    private String mPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +76,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 gotoGalleryActivity();
                 break;
             case R.id.llCamera:
-                gotoTakePhotoActivity();
+                gotoTakePhotoActivity(v);
                 break;
             case R.id.llSettings:
                 gotoSettingActivity();
@@ -93,41 +90,39 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void gotoGalleryActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION_READ_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, Global.PERMISSION_READ_EXTERNAL_STORAGE);
         } else {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
-            startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
+            startActivityForResult(intent, Global.CHOOSE_PHOTO);
         }
     }
 
-    private void gotoTakePhotoActivity() {
-        onImageFromCamera();
-    }
-
-    private void onImageFromCamera() {
+    private void gotoTakePhotoActivity(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
             try {
-                photoFile = createImageFile();
+                photoFile = takePhoto();
             } catch (IOException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
 
             if (photoFile != null) {
                 Uri photoUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".fileprovider", photoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(intent, Global.TAKE_PHOTO);
             }
         }
     }
 
-    private File createImageFile() throws IOException {
+    private File takePhoto() throws IOException {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA
+            }, Global.PERMISSION_WRITE_EXTERNAL_STORAGE);
         } else {
-            // Create an image file name
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageFileName = "JPEG_" + timeStamp + "_";
             File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
@@ -136,7 +131,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     ".jpg",
                     storageDir
             );
-            mCurrentPhotoPath = image.getAbsolutePath(); // save this to use in the intent
+            mPhotoPath = image.getAbsolutePath();
             return image;
         }
 
@@ -150,16 +145,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == Global.TAKE_PHOTO && resultCode == RESULT_OK) {
             Intent intent = new Intent(this, PlayActivity.class);
-            intent.putExtra("mCurrentPhotoPath", mCurrentPhotoPath);
+            intent.putExtra(Global.PHOTO_PATH, mPhotoPath);
             startActivity(intent);
         }
-        if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK) {
+        if (requestCode == Global.CHOOSE_PHOTO && resultCode == RESULT_OK) {
             Uri uri = data.getData();
-
             Intent intent = new Intent(this, PlayActivity.class);
-            intent.putExtra("mCurrentPhotoUri", uri.toString());
+            intent.putExtra(Global.PHOTO_URI, uri.toString());
             startActivity(intent);
         }
     }
@@ -167,9 +161,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE: {
+            case Global.PERMISSION_WRITE_EXTERNAL_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    onImageFromCamera();
+                    gotoTakePhotoActivity(new View(this));
                 }
                 return;
             }

@@ -13,12 +13,19 @@
         android:background="#90000000" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/v1"
+        android:id="@+id/h1"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.2"
         />
+    <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/h2"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:orientation="vertical"
+    app:layout_constraintGuide_percent="0.8"
+    />
 
     <TextView
         android:id="@+id/tvSettings"
@@ -39,21 +46,33 @@
         android:layout_margin="@dimen/_15sdp"
         app:layout_constraintTop_toBottomOf="@id/tvSettings"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/v1"
+        app:layout_constraintEnd_toStartOf="@id/h1"
         android:text="Rows : "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
     <SeekBar
-        android:id="@+id/sbRow"
+        android:id="@+id/sbRows"
         app:layout_constraintTop_toTopOf="@id/tvRows"
-        app:layout_constraintStart_toEndOf="@id/v1"
+        app:layout_constraintStart_toEndOf="@id/h1"
         app:layout_constraintBottom_toBottomOf="@id/tvRows"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/h2"
         android:max="7"
         android:min="3"
         android:layout_width="@dimen/_200sdp"
         android:layout_height="@dimen/_5sdp"/>
+
+    <TextView
+        android:id="@+id/tvRowsValue"
+        app:layout_constraintStart_toEndOf="@id/h2"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="wrap_content"
+        android:text="0"
+        android:textStyle="bold"
+        android:textColor="#FFF"
+        app:layout_constraintTop_toTopOf="@id/tvRows"
+        app:layout_constraintBottom_toBottomOf="@id/tvRows"
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/tvColumns"
@@ -61,7 +80,7 @@
         android:layout_margin="@dimen/_15sdp"
         app:layout_constraintTop_toBottomOf="@id/tvRows"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/v1"
+        app:layout_constraintEnd_toStartOf="@id/h1"
         android:text="Columns : "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
@@ -69,13 +88,26 @@
     <SeekBar
         android:id="@+id/sbColumns"
         app:layout_constraintTop_toTopOf="@id/tvColumns"
-        app:layout_constraintStart_toEndOf="@id/v1"
+        app:layout_constraintStart_toEndOf="@id/h1"
         app:layout_constraintBottom_toBottomOf="@id/tvColumns"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/h2"
         android:max="7"
         android:min="3"
         android:layout_width="@dimen/_200sdp"
         android:layout_height="@dimen/_5sdp"/>
+
+    <TextView
+        android:id="@+id/tvColumnsValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textStyle="bold"
+        android:textColor="#FFF"
+        app:layout_constraintStart_toEndOf="@id/h2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvColumns"
+        app:layout_constraintBottom_toBottomOf="@id/tvColumns"
+        />
 
     <Button
         android:id="@+id/btnPurchase"

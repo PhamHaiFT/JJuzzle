@@ -7,7 +7,7 @@
     tools:context=".activities.HomeActivity">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/v1"
+        android:id="@+id/h1"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:orientation="horizontal"
@@ -17,7 +17,7 @@
         android:layout_width="@dimen/_150sdp"
         android:layout_height="@dimen/_150sdp"
         android:src="@drawable/icon_jj_no_background"
-        app:layout_constraintBottom_toTopOf="@id/v1"
+        app:layout_constraintBottom_toTopOf="@id/h1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -29,7 +29,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/v1">
+        app:layout_constraintTop_toBottomOf="@id/h1">
 
         <LinearLayout
             android:layout_width="match_parent"

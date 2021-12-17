@@ -16,6 +16,7 @@ import com.whereismypiece.puzzle.R;
 import com.whereismypiece.puzzle.activities.InAppPurchaseActivity;
 import com.whereismypiece.puzzle.activities.PlayActivity;
 import com.whereismypiece.puzzle.models.ImageModel;
+import com.whereismypiece.puzzle.utils.Global;
 
 import java.util.ArrayList;
 
@@ -52,7 +53,7 @@ public class ImageViewAdapter extends RecyclerView.Adapter<ImageViewAdapter.Imag
             Intent intent;
             if (model.getLockState()){
                 intent = new Intent(mContext, PlayActivity.class);
-                intent.putExtra("assetName", model.getName());
+                intent.putExtra(Global.ASSETS_NAME, model.getName());
             }else {
                 intent = new Intent(mContext, InAppPurchaseActivity.class);
             }
